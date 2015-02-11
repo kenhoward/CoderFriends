@@ -10,6 +10,7 @@ app.config(function($routeProvider) {
 	})
 	.when ('/friend/:github_username', {
 		templateUrl: 'templates/friend.html'
+		controller: 'githubCtrl'
 	})
 	.otherwise {
 		redirectTo: ('/')
