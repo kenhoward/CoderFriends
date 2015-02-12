@@ -40,22 +40,36 @@ var requireAuth = function(req, res, next) {
   return next();
 }
 
-// go to localhost:8111/auth/github to find the required path
-app.get('/api/github/following', requireAuth, function(req, res) {
-	//request to github, the ppl this user follows
-	request('someUrl', function(err, responseData){
-		if(!err){
-			res.status(200).send(responseData);
-		} else {
-			console.log(err)
-			res.status(err.statusCode).send();
-		}
-	})
+app.get('/api/github/following', function(req, res){
+	request({url: "https://api.github.com/users/" + user.username + "/followers?client_id=6f8444cbf25af8b3ec3d&client_secret=a2cb8cc72ca09856cef18744f82d28291a7e3346", headers: {"User-Agent":user.username}, params: user.accessToken}, function(error, response, body) {
+		res.status(200).send(body);
+	});
+});
+
+//Stuck on this...
+app.get('/user',  function(req, res){
+	res.status(200).send(JSON.stringify(user));
+});
+
+app.get('/api/github/:username/activity', function(req, res){
+	request({url: "https://api.github.com/users/" + req.params.username + "/events", headers: {"User-Agent":user.username}, params: user.accessToken}, function(error, response, body) {
+		res.status(200).send(body);
+	});
 })
+
+//How do I find the correct url?
+// app.get('/api/github/following', requireAuth, function(req, res) {
+// 	//request to github, the ppl this user follows
+// 	request.get(someUrl, function(err, responseData){
+// 		if(!err){
+// 			res.status(200).send(responseData);
+// 		} else {
+// 			console.log(err)
+// 			res.status(err.statusCode).send();
+// 		}
+// 	})
+// })
 
 app.listen(port, function() {
 	console.log('Listening to ' + port);
-})
-
-
-
+});
